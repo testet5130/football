@@ -9,14 +9,22 @@
     <div id="res"></div>
     <div>test</div>
     <script>
-        var xhr = new XMLHttpRequest;
-        xhr.onreadystatechange = function() {
-            if(this.status == 200 && this.readyState == 4) {
-                document.querySelector("#res").textContent = this.responseText;
+        var data = null;
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === this.DONE) {
+                console.log(this.responseText);
             }
-        }
-        // xhr.open("GET", "", true);
-        // xhr.send();
+        });
+
+        xhr.open("GET", "https://test2944.p.rapidapi.com/");
+        xhr.setRequestHeader("x-rapidapi-host", "test2944.p.rapidapi.com");
+        xhr.setRequestHeader("x-rapidapi-key", "56013f303dmsh67f1818b9a491b5p1b2687jsn0285aca01c20");
+
+        xhr.send(data);
+
     </script>
 </body>
 </html>
