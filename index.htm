@@ -19,7 +19,7 @@
 
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === this.DONE) {
-                document.querySelector("#res").innerHTML = this.responseText;
+                document.querySelector("#res").textContent = this.responseText;
             }
         });
 
