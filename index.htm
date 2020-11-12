@@ -98,6 +98,9 @@
                 url = "https://v2.api-football.com/leagues/search/"+v.trim();
                 req(url, res);
             }
+            setTimeout(function() {
+                list();
+            }, 2500);
         }
 
         function list() {
@@ -119,26 +122,26 @@
                 span.textContent = teams[i]["name"];
                 td[1].appendChild(img);
                 td[1].appendChild(span);            
-                td[2].textContent = rData["api"]["statistics"]["matchs"]["matchsPlayed"]["total"].toString();
-                td[3].textContent = rData["api"]["statistics"]["matchs"]["wins"]["total"].toString();
-                td[4].textContent = rData["api"]["statistics"]["matchs"]["draws"]["total"].toString();
-                td[5].textContent = rData["api"]["statistics"]["matchs"]["loses"]["total"].toString();
-                td[6].textContent = rData["api"]["statistics"]["goals"]["goalsFor"]["total"].toString();
-                td[7].textContent = rData["api"]["statistics"]["goals"]["goalsAgainst"]["total"].toString();
-                td[8].textContent = rData["api"]["statistics"]["goals"]["goalsFor"]["total"].toString();
-                td[9].textContent = rData["api"]["statistics"]["goals"]["goalsAgainst"]["total"].toString();
+                td[2].textContent = result[i]["matchs"]["matchsPlayed"]["total"].toString();
+                td[3].textContent = result[i]["matchs"]["wins"]["total"].toString();
+                td[4].textContent = result[i]["matchs"]["draws"]["total"].toString();
+                td[5].textContent = result[i]["matchs"]["loses"]["total"].toString();
+                td[6].textContent = result[i]["goals"]["goalsFor"]["total"].toString();
+                td[7].textContent = result[i]["goals"]["goalsAgainst"]["total"].toString();
+                td[8].textContent = result[i]["goals"]["goalsFor"]["total"].toString();
+                td[9].textContent = result[i]["goals"]["goalsAgainst"]["total"].toString();
                 for(ii=0;ii<10;ii++){
                     tr.appendChild(td[ii]);
                 }
                 
                 document.querySelector("table").appendChild(tr);
-                
+
             }
         }
 
         setTimeout(function() {
             list();
-        },2500);
+        }, 3000);
 
         s("Premier League");
 
@@ -154,7 +157,7 @@
                 if (this.readyState === 4 && this.status == 200) {
                     res = JSON.parse(this.response);
                     rData = JSON.parse(this.response);
-                    document.querySelector("#zxcasd").textContent = this.response;
+                    // document.querySelector("#zxcasd").textContent = this.response;
                     if( callback != "" ) {
                         callback();
                     }
@@ -172,7 +175,7 @@
             };
             
             xhr.open("GET", url, true);
-            xhr.setRequestHeader("X-RapidAPI-Key", "e1283f35b98e89dba23184d2e83d6c6f");
+            xhr.setRequestHeader("X-RapidAPI-Key", "393b6eada7b82f5878350d6a227d789a");
             xhr.send();
             return res;
         }
