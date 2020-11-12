@@ -10,21 +10,19 @@
     <div>test</div>
     <script>
         var data = null;
+
         var xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
 
         xhr.addEventListener("readystatechange", function () {
             if (this.readyState === this.DONE) {
-                console.log(this.responseText);
+                document.querySelector("#res").textContent = this.responseText;
             }
         });
 
-        xhr.open("GET", "https://api-football-v1.p.rapidapi.com/seasons");
-        xhr.setRequestHeader("x-rapidapi-host", "test2944.p.rapidapi.com");
-        xhr.setRequestHeader("x-rapidapi-key", "bd7f8ace13msh0cb59f2dd144218p1ec69fjsnf577cc00fad1");
-
+        xhr.open("GET", "://v2.api-football.com/fixtures/league/524");
+        xhr.setRequestHeader("X-RapidAPI-Key", "704382b3bb503eb8da177cb45cc8b788");
         xhr.send(data);
-
     </script>
 </body>
 </html>
