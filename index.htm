@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" style="direction: rtl;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .hidden{
+            display: none;
+        }
+        .spanner-container{position: fixed;top: 0;left: 0%;width: 100%;height: 100%;}
+        .spanner-overlay{background: #fff;width: 100%;height: 100%;z-index: 999;opacity: .6;}
+        .spanner{position: fixed;top: 40%;left: 50%;border:5px solid #1eaae1;border-radius: 50%;transform: translate(-50%);padding:20px;animation: scalable infinite 1.5s;}
+        @keyframes scalable{
+            from{padding:0;opacity: 0;}
+            to{padding:20px;opacity: 1;}
+        }
+        table{width:90%;margin:0 auto;text-align: center;}
+        table td span{display: block;}
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div id="zxcasd" class=""></div>
+    <div class="spanner-container hidden">
+        <div class="spanner-overlay"></div>
+        <div class="spanner"></div>
+    </div>
+
+    <div class="league">
+        <div>
+            <select name="league" id="leagues">
+                <option value="Premier League">الدوري الانجليزي</option>
+                <option value="UEFA Europa League">الدوري الاروبي</option>
+            </select>
+        </div>
+        <table>
+            <!-- <tr>
+                <th>POS</th>
+                <th>Club</th>
+                <th>Played</th>
+            </tr> -->
+            <tr>
+                <th>POS</th>
+                <th>Club</th>
+                <th>Played</th>
+                <th>Won</th>
+                <th>Drawn</th>
+                <th>Lost</th>
+                <th>For</th>
+                <th>Againest</th>
+                <th>Diff</th>
+                <th>Points</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+
+        let rData = "";
+
+
+        let leagues = ["Premier League", "UEFA Europa League"];
+
+        let select = document.querySelector("#leagues");
+        var league = [];
+        var teams = [];
+        var result = [];
+        var trs = [];
+
+        function s(v) {
+            if(leagues.indexOf(v) != -1) {
+                val = v;
+                function res() {
+                    league = [];
+                    league[0] = {"name":val, "ids":[]};
+                    league[0]["ids"].push(rData["api"]["leagues"][rData["api"]["leagues"].length-1]["league_id"].toString());
+                    function res2() {
+                        var tr = document.createElement("tr");
+                        let teamsLen = rData["api"]["teams"].length > 25 ? 25 : rData["api"]["teams"].length;
+                        for(let i = 0;i < teamsLen;i++) {
+
+                            teams.push({
+                                "name":rData["api"]["teams"][i]["name"],
+                                "id":rData["api"]["teams"][i]["team_id"],
+                                "logo":rData["api"]["teams"][i]["logo"],
+                            });
+
+                            function res3() {
+                                result.push(rData["api"]["statistics"]);
+                            }
+
+                            req("https://v2.api-football.com/statistics/"+league[0]["ids"][0]+'/'+teams[teams.length-1]["id"], res3);
+
+                        }
+                    }
+                    req("https://v2.api-football.com/teams/league/"+rData["api"]["leagues"][rData["api"]["leagues"].length-1]["league_id"], res2);
+                }
+                url = "https://v2.api-football.com/leagues/search/"+v.trim();
+                req(url, res);
+            }
+            setTimeout(function() {
+                list();
+            }, 2500);
+        }
+
+        function list() {
+            for(i = 0;i < teams.length;i++) {
+                var td = [];
+
+                var tr = document.createElement("tr");
+
+                for(ii=0;ii<10;ii++){
+                    td.push(document.createElement("td"));
+                }
+                
+                td[0].textContent = (parseInt(i+1)).toString();
+                
+                var img = document.createElement("img")
+                img.setAttribute("src", teams[i]["logo"]);
+                img.setAttribute("style","width:50px;height:50px");
+                var span = document.createElement("span");
+                span.textContent = teams[i]["name"];
+                td[1].appendChild(img);
+                td[1].appendChild(span);            
+                td[2].textContent = result[i]["matchs"]["matchsPlayed"]["total"].toString();
+                td[3].textContent = result[i]["matchs"]["wins"]["total"].toString();
+                td[4].textContent = result[i]["matchs"]["draws"]["total"].toString();
+                td[5].textContent = result[i]["matchs"]["loses"]["total"].toString();
+                td[6].textContent = result[i]["goals"]["goalsFor"]["total"].toString();
+                td[7].textContent = result[i]["goals"]["goalsAgainst"]["total"].toString();
+                td[8].textContent = result[i]["goals"]["goalsFor"]["total"].toString();
+                td[9].textContent = result[i]["goals"]["goalsAgainst"]["total"].toString();
+                for(ii=0;ii<10;ii++){
+                    tr.appendChild(td[ii]);
+                }
+                
+                document.querySelector("table").appendChild(tr);
+
+            }
+        }
+
+        setTimeout(function() {
+            list();
+        }, 3000);
+
+        s("Premier League");
+
+        select.addEventListener("change", function() {
+            s(this.value);
+        });
+
+
+        function req(url, callback="") {
+            let res = "";
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4 && this.status == 200) {
+                    res = JSON.parse(this.response);
+                    rData = JSON.parse(this.response);
+                    // document.querySelector("#zxcasd").textContent = this.response;
+                    if( callback != "" ) {
+                        callback();
+                    }
+                }
+            });
+            
+            document.querySelector(".spanner-container").setAttribute("class", "spanner-container");
+            
+            xhr.onprogress = function(e) {
+                if(e.loaded >= e.total) {
+                    document.querySelector(".spanner-container").setAttribute("class", "spanner-container hidden");
+                } else {
+                    console.log(e.loaded.toString()+"-"+e.total.toString());
+                }
+            };
+            
+            xhr.open("GET", url, true);
+            xhr.setRequestHeader("X-RapidAPI-Key", "79342a13db90944ae216fcb7e52b97b1");
+            xhr.send();
+            return res;
+        }
+
+        function getLeagueID(leagueName) {
+
+        }
+
+        // url = "https://v2.api-football.com/statistics/2771/541"; // get 
+        // url = "https://v2.api-football.com/leagues/current/"; // get leauge by name
+        
+        // url = "https://v2.api-football.com/leagues/search/uefa europa"; // get leauge by name
+
+
+        // rData = req(url);
+
+    </script>
+</body>
+</html>
